@@ -24,3 +24,5 @@ Ongoing Notes.txt
 *.log
 *.pkl
 
+.DS_Store
+
