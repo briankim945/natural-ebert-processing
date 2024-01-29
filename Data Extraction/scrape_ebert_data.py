@@ -12,7 +12,7 @@ def extract_page_reviews_list(url):
     return reviews_list
 
 def get_review_urls(review_items):
-    reviews_links_list = [r['href'] for r in reviews_links_list]
+    reviews_links_list = [r['href'] for r in review_items]
     return reviews_links_list
 
 def count_stars(star_div):
