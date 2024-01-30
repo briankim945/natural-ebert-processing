@@ -18,41 +18,47 @@ def get_review_urls(review_items):
 def count_stars(star_div):
     return len(star_div.find_all(class_="icon-star-full")) + 0.5 * len(star_div.find_all(class_="icon-star-half"))
 
+def count_stars(star_div):
+    return len(star_div.find_all(class_="icon-star-full")) + 0.5 * len(star_div.find_all(class_="icon-star-half"))
+
 def extract_ebert_info(url):
-    page = requests.get(url)
-    soup = BeautifulSoup(page.content, "html.parser")
-    
-    # Title
-    title_divs = [t.text.strip() for t in soup.find_all(class_="page-content--title")]
-    assert(len(title_divs) == 1)
-    title = title_divs[0]
-    
-    # Author
-    author_divs = [t.text.strip() for t in soup.find_all(class_="byline")]
-    assert(len(author_divs) == 1)
-    author = author_divs[0]
-    
-    # Stars
-    star_divs = soup.find_all(class_="page-content--star-rating")
-    assert(len(star_divs) == 1)
-    star_div = star_divs[0]
+    try:
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, "html.parser")
 
-    star_count = count_stars(star_div)
-    
-    # Time
-    time_divs = soup.find_all("time")
-    assert(len(time_divs) == 1)
-    time_div = time_divs[0]
+        # Title
+        title_divs = [t.text.strip() for t in soup.find_all(class_="page-content--title")]
+        assert(len(title_divs) == 1)
+        title = title_divs[0]
 
-    time_info = time_div.text.strip()
-    
-    # Content
-    content_paragraphs = []
-    content_divs_tmp = soup.find_all(class_="page-content--block_editor-content")
-    for c in content_divs_tmp:
-        content_paragraphs.extend([t.text.strip() for t in c.find_all(["p", "li"])])
-        
-    return title, author, time_info, star_count, content_paragraphs
+        # Author
+        author_divs = [t.text.strip() for t in soup.find_all(class_="byline")]
+        assert(len(author_divs) == 1)
+        author = author_divs[0]
+
+        # Stars
+        star_divs = soup.find_all(class_="page-content--star-rating")
+        assert(len(star_divs) == 1)
+        star_div = star_divs[0]
+
+        star_count = count_stars(star_div)
+
+        # Time
+        time_divs = soup.find_all("time")
+        assert(len(time_divs) == 1)
+        time_div = time_divs[0]
+
+        time_info = time_div.text.strip()
+
+        # Content
+        content_paragraphs = []
+        content_divs_tmp = soup.find_all(class_="page-content--block_editor-content")
+        for c in content_divs_tmp:
+            content_paragraphs.extend([t.text.strip() for t in c.find_all(["p", "li"])])
+
+        return title, author, time_info, star_count, content_paragraphs
+    except Exception as e:
+        return url, str(e)
 
 
 page_index = 1
@@ -78,7 +84,7 @@ while True:
     print(f"page_index {page_index} and review_links {len(review_links.keys())}",  end='\r')
     
 with open('raw_urls.pkl', 'wb') as f:
-    pickle.load(f, review_links)
+    pickle.dump(review_links, f, pickle.HIGHEST_PROTOCOL)
     
 review_data = {}
 
