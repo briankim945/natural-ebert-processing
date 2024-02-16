@@ -27,3 +27,8 @@ Ongoing Notes.txt
 .DS_Store
 
 *.txt
+
+/tmp
+/tmp/
+*/tmp/
+*/tmp/*
